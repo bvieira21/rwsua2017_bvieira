@@ -5,7 +5,7 @@
 
 using namespace std;
 
-namespace rws2017
+namespace rwsua2017
 {
 
 /*

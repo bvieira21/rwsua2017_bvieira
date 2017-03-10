@@ -1,5 +1,7 @@
 #include <iostream>  
 #include <vector>    
+//ROS INCLUDES
+#include <ros/ros.h>  
 
 #include <rwsua2017_libs/player.h>   
 #include <rwsua2017_msgs/MakeAPlay.h>                                                                            
@@ -57,21 +59,31 @@ namespace rwsua2017
 	{
 		public:
 		
+		ros::NodeHandle n;
+		
 		MyPlayer(string argin_name, string argin_team_name): Player (argin_name, argin_team_name)
 		{
+			ros::Subscriber sub = n.subscribe("/make_a_play", 1000, &MyPlayer::makeAPlayCallback,this);
 			cout<< "Initialized MyPlayer"<<endl;
 		}
+		
+		void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg)
+		{
+			ROS_INFO("func"	);
+		}
+		
 		
 		vector<string> teammates;
 	};
 }
 
-int main()
+int main(int argc, char **argv)
 {
 	//because we used <using namespace std>  we can replace the other line
 	//std::cout << "Hello world" << std::endl;
 	cout << "Hello world" << endl;
 
+	ros::init(argc, argv, "player_bvieira");
    
     //Creating an instance of class Player
     rwsua2017::MyPlayer myplayer("bvieira","red");

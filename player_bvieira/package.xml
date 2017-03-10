@@ -47,6 +47,10 @@
   <run_depend>rospy</run_depend>
   <run_depend>std_msgs</run_depend>
   
+  
+  
+  
+  
   <build_depend>rwsua2017_libs</build_depend>
   <run_depend>rwsua2017_libs</run_depend>
   
@@ -59,6 +63,10 @@
   <run_depend>message_runtime</run_depend>
   
   <run_depend>message_generation</run_depend>
+
+
+
+
 
   <!-- The export tag contains other, unspecified, tags -->
   <export>

@@ -73,7 +73,7 @@ int main()
 
    
     //Creating an instance of class Player
-    rwsua20172017::MyPlayer myplayer("bvieira","red");
+    rwsua2017::MyPlayer myplayer("bvieira","red");
 
     //cout << "Created an instance of class player with public name " << player.name << endl;
     cout << "name = " << myplayer.name << endl;

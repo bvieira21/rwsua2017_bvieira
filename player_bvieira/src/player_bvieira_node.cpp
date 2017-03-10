@@ -2,6 +2,7 @@
 #include <vector>    
 //ROS INCLUDES
 #include <ros/ros.h>  
+#include <tf/transform_broadcaster.h>
 
 #include <rwsua2017_libs/player.h>   
 #include <rwsua2017_msgs/MakeAPlay.h>                                                                            
@@ -60,6 +61,8 @@ namespace rwsua2017 {
 
         ros::Subscriber sub;
 
+        tf::TransformBroadcaster br;
+
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
             /*
             n.getParam("red", red_team);
@@ -83,7 +86,17 @@ namespace rwsua2017 {
         }
 
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
+            
             cout << "msg: max displacement -> " << msg->max_displacement << endl;
+            
+            tf::Transform transform;
+            
+            transform.setOrigin(tf::Vector3(1,1,0.0));
+            tf::Quaternion q;
+            q.setRPY(0, 0, 0);
+            transform.setRotation(q);
+
+            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", name));
         }
 
 
@@ -96,23 +109,23 @@ int main(int argc, char **argv) {
     //std::cout << "Hello world" << std::endl;
     cout << "Hello world" << endl;
 
-    ros::init(argc, argv, "player_bvieira");
+            ros::init(argc, argv, "player_bvieira");
 
-    //Creating an instance of class Player
-    rwsua2017::MyPlayer myplayer("bvieira", "red");
-
-
-
-    //cout << "Created an instance of class player with public name " << player.name << endl;
-    cout << "name = " << myplayer.name << endl;
-    cout << "team name = " << myplayer.get_team_name() << endl;
-
-    myplayer.teammates.push_back("rodolfo");
-    myplayer.teammates.push_back("arnaldo");
+            //Creating an instance of class Player
+            rwsua2017::MyPlayer myplayer("bvieira", "red");
 
 
 
-    // size_t = unsigned long int (sortchut)
+            //cout << "Created an instance of class player with public name " << player.name << endl;
+            cout << "name = " << myplayer.name << endl;
+            cout << "team name = " << myplayer.get_team_name() << endl;
+
+            myplayer.teammates.push_back("rodolfo");
+            myplayer.teammates.push_back("arnaldo");
+
+
+
+            // size_t = unsigned long int (sortchut)
     for (size_t i = 0; i < myplayer.teammates.size(); ++i) {
         cout << myplayer.teammates[i] << endl;
 

@@ -1,11 +1,14 @@
 #include <iostream>  
-#include <vector>                                                                                   
+#include <vector>    
+
+#include <rwsua2017_libs/player.h>                                                                               
 
 using namespace std;
 
 namespace rws2017
 {
 
+/*
 	class Player
 	{
 		public:
@@ -47,6 +50,7 @@ namespace rws2017
 		string team_name;
 	};
 	
+	*/
 	
 	class MyPlayer: public Player //inherits the class Player
 	{

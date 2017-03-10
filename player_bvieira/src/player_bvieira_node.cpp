@@ -82,7 +82,7 @@ namespace rwsua2017 {
             for (size_t i = 0; i < blue_team->size(); i++)
                 cout << blue_team[i] << endl;
              */
-            sub = n.subscribe("/make_a_play", 1000, &MyPlayer::makeAPlayCallback, this);
+            sub = n.subscribe("/make_a_play/turtle", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
 
             t1.setOrigin(tf::Vector3(1, 1, 0));
@@ -90,7 +90,7 @@ namespace rwsua2017 {
             q.setRPY(0, 0, 0);
             t1.setRotation(q);
             br.sendTransform(tf::StampedTransform(t1, ros::Time::now(), "map", name));
-        
+
         }
 
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
@@ -101,15 +101,17 @@ namespace rwsua2017 {
             //deveria ser calculado pela AI do sistema
             float turn_angle = M_PI / 10;
             float displacement = 0.5;
-            
+
             tf::Transform t_mov;
             tf::Quaternion q;
             q.setRPY(0, 0, turn_angle);
             t_mov.setRotation(q);
-            t_mov.setOrigin( tf::Vector3(displacement , 0.0, 0.0) );
-            tf::Transform t = t1  * t_mov;
-
+            t_mov.setOrigin(tf::Vector3(displacement, 0.0, 0.0));
+            tf::Transform t = t1 * t_mov;
+            
             br.sendTransform(tf::StampedTransform(t, ros::Time::now(), "map", name));
+            
+            t1=t;
         }
 
 

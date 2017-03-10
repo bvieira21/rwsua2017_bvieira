@@ -62,6 +62,7 @@ namespace rwsua2017 {
         ros::Subscriber sub;
 
         tf::TransformBroadcaster br;
+        tf::Transform t1;
 
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
             /*
@@ -83,20 +84,32 @@ namespace rwsua2017 {
              */
             sub = n.subscribe("/make_a_play", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
+
+            t1.setOrigin(tf::Vector3(1, 1, 0));
+            tf::Quaternion q;
+            q.setRPY(0, 0, 0);
+            t1.setRotation(q);
+            br.sendTransform(tf::StampedTransform(t1, ros::Time::now(), "map", name));
+        
         }
 
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr& msg) {
-            
-            cout << "msg: max displacement -> " << msg->max_displacement << endl;
-            
-            tf::Transform transform;
-            
-            transform.setOrigin(tf::Vector3(1,1,0.0));
-            tf::Quaternion q;
-            q.setRPY(0, 0, 0);
-            transform.setRotation(q);
 
-            br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "map", name));
+            cout << "msg: max displacement -> " << msg->max_displacement << endl;
+
+            //definição dos angulos de rotação e valores de translação
+            //deveria ser calculado pela AI do sistema
+            float turn_angle = M_PI / 10;
+            float displacement = 0.5;
+            
+            tf::Transform t_mov;
+            tf::Quaternion q;
+            q.setRPY(0, 0, turn_angle);
+            t_mov.setRotation(q);
+            t_mov.setOrigin( tf::Vector3(displacement , 0.0, 0.0) );
+            tf::Transform t = t1  * t_mov;
+
+            br.sendTransform(tf::StampedTransform(t, ros::Time::now(), "map", name));
         }
 
 
@@ -109,23 +122,23 @@ int main(int argc, char **argv) {
     //std::cout << "Hello world" << std::endl;
     cout << "Hello world" << endl;
 
-            ros::init(argc, argv, "player_bvieira");
+    ros::init(argc, argv, "player_bvieira");
 
-            //Creating an instance of class Player
-            rwsua2017::MyPlayer myplayer("bvieira", "red");
-
-
-
-            //cout << "Created an instance of class player with public name " << player.name << endl;
-            cout << "name = " << myplayer.name << endl;
-            cout << "team name = " << myplayer.get_team_name() << endl;
-
-            myplayer.teammates.push_back("rodolfo");
-            myplayer.teammates.push_back("arnaldo");
+    //Creating an instance of class Player
+    rwsua2017::MyPlayer myplayer("bvieira", "red");
 
 
 
-            // size_t = unsigned long int (sortchut)
+    //cout << "Created an instance of class player with public name " << player.name << endl;
+    cout << "name = " << myplayer.name << endl;
+    cout << "team name = " << myplayer.get_team_name() << endl;
+
+    myplayer.teammates.push_back("rodolfo");
+    myplayer.teammates.push_back("arnaldo");
+
+
+
+    // size_t = unsigned long int (sortchut)
     for (size_t i = 0; i < myplayer.teammates.size(); ++i) {
         cout << myplayer.teammates[i] << endl;
 

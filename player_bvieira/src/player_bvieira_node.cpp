@@ -1,7 +1,8 @@
 #include <iostream>  
 #include <vector>    
 
-#include <rwsua2017_libs/player.h>                                                                               
+#include <rwsua2017_libs/player.h>   
+#include <rwsua2017_msgs/MakeAPlay.h>                                                                            
 
 using namespace std;
 

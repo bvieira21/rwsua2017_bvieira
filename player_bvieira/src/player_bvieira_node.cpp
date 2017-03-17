@@ -40,6 +40,7 @@ namespace rwsua2017 {
         tf::TransformListener listener;
         tf::TransformBroadcaster br;
         ros::Publisher vis_pub;
+        int behaviour;
 
         /**
          * @brief  Class constructor, initializes the player 
@@ -60,6 +61,8 @@ namespace rwsua2017 {
             q.setRPY(0, 0, 0);
             t1.setRotation(q);
             br.sendTransform(tf::StampedTransform(t1, ros::Time::now(), "map", name));
+            
+            behaviour=1;
 
         }
 
@@ -171,10 +174,13 @@ namespace rwsua2017 {
             std::vector<std::string> enemies = getNearbyPlayers();
             float turn_angle;
 
-            if (enemies[2] == "run")
-                turn_angle = getAngleTo(enemies[1]) + 5*M_PI/6;
-            else
+            if (enemies[2] == "run") {
+                turn_angle = getAngleTo(enemies[1]) + 5 * M_PI / 6;
+
+            } else {
                 turn_angle = getAngleTo(enemies[0]);
+
+            }
 
             ROS_WARN_STREAM("map dist->" << getMapDist());
 
@@ -294,6 +300,9 @@ namespace rwsua2017 {
             norm2 = sqrt(x2 * x2 + y2 * y2);
             norm3 = sqrt(x3 * x3 + y3 * y3);
 
+
+
+
             if (norm1 < norm2 && norm1 < norm3) {
                 prey_name = "jferreira";
                 dists[0] = norm1;
@@ -336,11 +345,19 @@ namespace rwsua2017 {
             v.push_back(prey_name);
             v.push_back(hunter_name);
 
-
-            if (dists[0] > dists[1])
-                v.push_back("run");
+            if (behaviour == 0)
+                dists[0] = dists[0]*0.8;
             else
+                dists[1] = dists[1]*0.8;
+
+
+            if (dists[0] > dists[1]) {
+                v.push_back("run");
+                behaviour = 0;
+            } else {
                 v.push_back("hunt");
+                behaviour = 1;
+            }
 
             return v;
         }

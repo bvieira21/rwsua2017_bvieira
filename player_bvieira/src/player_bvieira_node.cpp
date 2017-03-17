@@ -40,7 +40,7 @@ namespace rwsua2017 {
         tf::TransformListener listener;
         tf::TransformBroadcaster br;
         ros::Publisher vis_pub;
-        int behaviour;
+        string behaviour;
 
         /**
          * @brief  Class constructor, initializes the player 
@@ -62,7 +62,7 @@ namespace rwsua2017 {
             t1.setRotation(q);
             br.sendTransform(tf::StampedTransform(t1, ros::Time::now(), "map", name));
             
-            behaviour=1;
+            behaviour="run";
 
         }
 
@@ -345,18 +345,18 @@ namespace rwsua2017 {
             v.push_back(prey_name);
             v.push_back(hunter_name);
 
-            if (behaviour == 0)
-                dists[0] = dists[0]*0.8;
-            else
+            if (behaviour == "run")
                 dists[1] = dists[1]*0.8;
+            else
+                dists[0] = dists[0]*0.8;
 
 
             if (dists[0] > dists[1]) {
                 v.push_back("run");
-                behaviour = 0;
+                behaviour = "run";
             } else {
                 v.push_back("hunt");
-                behaviour = 1;
+                behaviour = "hunt";
             }
 
             return v;

@@ -13,9 +13,8 @@
  *
  * =====================================================================================
  */
-#
 
-
+#define time_to_wait 0.1
 
 #include <iostream>  
 #include <vector>    
@@ -86,8 +85,10 @@ namespace rwsua2017 {
 
 
             tf::StampedTransform trans;
+            ros::Time now = ros::Time(0); //gets the latest transform received
             try {
-                listener.lookupTransform(name, player_name, ros::Time(0), trans);
+                listener.waitForTransform(name, player_name, now, ros::Duration(time_to_wait) );
+                listener.lookupTransform(name, player_name, now, trans);
             } catch (tf::TransformException ex) {
                 ROS_ERROR("%s", ex.what());
                 ros::Duration(1.0).sleep();
@@ -111,9 +112,10 @@ namespace rwsua2017 {
         tf::StampedTransform getPose(void) {
 
             tf::StampedTransform trans;
-            
+            ros::Time now = ros::Time(0); //gets the latest transform received
             try {
-                listener.lookupTransform("map","bvieira", ros::Time(0), trans);
+                listener.waitForTransform("/map", name, now, ros::Duration(time_to_wait) );
+                listener.lookupTransform("/map", name, now, trans);
             } catch (tf::TransformException ex) {
                 ROS_ERROR("%s", ex.what());
                 ros::Duration(1.0).sleep();
@@ -152,7 +154,7 @@ namespace rwsua2017 {
             tf::Transform t = getPose() * t_mov;
             //Send the new transform to ROS
             br.sendTransform(tf::StampedTransform(t, ros::Time::now(), "/map", name));
-            
+
         }
 
 

@@ -1,0 +1,22 @@
+actions: []
+authors: ''
+brief: ''
+bugtracker: ''
+depends:
+- catkin
+- roscpp
+- message_runtime
+- std_msgs
+- tf
+- rospy
+- message_generation
+- rwsua2017_msgs
+- rwsua2017_libs
+description: The player_bvieira package
+license: TODO
+maintainers: gp <gp@todo.todo>
+msgs: []
+package_type: package
+repo_url: ''
+srvs: []
+url: ''

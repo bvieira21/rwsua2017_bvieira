@@ -87,7 +87,7 @@ namespace rwsua2017 {
             tf::StampedTransform trans;
             ros::Time now = ros::Time(0); //gets the latest transform received
             try {
-                listener.waitForTransform(name, player_name, now, ros::Duration(time_to_wait) );
+                listener.waitForTransform(name, player_name, now, ros::Duration(time_to_wait));
                 listener.lookupTransform(name, player_name, now, trans);
             } catch (tf::TransformException ex) {
                 ROS_ERROR("%s", ex.what());
@@ -114,7 +114,7 @@ namespace rwsua2017 {
             tf::StampedTransform trans;
             ros::Time now = ros::Time(0); //gets the latest transform received
             try {
-                listener.waitForTransform("/map", name, now, ros::Duration(time_to_wait) );
+                listener.waitForTransform("/map", name, now, ros::Duration(time_to_wait));
                 listener.lookupTransform("/map", name, now, trans);
             } catch (tf::TransformException ex) {
                 ROS_ERROR("%s", ex.what());
@@ -136,13 +136,28 @@ namespace rwsua2017 {
             //definição dos angulos de rotação e valores de translação
             //deveria ser calculado pela AI do sistema
 
-            float turn_angle = getAngleTo("vsilva");
+            float turn_angle = getAngleTo("jferreira");
             //float turn_angle = M_PI/30;
             float displacement = msg->max_displacement;
+            
+            move(displacement, turn_angle, msg->max_displacement, M_PI/30);
+        }
 
-            double max_t = (M_PI / 30);
-            if (turn_angle > max_t) turn_angle = max_t;
-            else if (turn_angle < -max_t) turn_angle = -max_t;
+        /**
+         * @brief  Generation of a ramdom number
+         * @return Random number generated  
+         * @author B.Vieira
+         */
+        void move(float displacement, float turn_angle, float max_displacement, float max_turn_angle) {
+
+            //saturation of turn_angle
+            if (turn_angle > max_turn_angle) turn_angle = max_turn_angle;
+            else if (turn_angle < -max_turn_angle) turn_angle = -max_turn_angle;
+
+            //saturation of displacement
+            if (displacement > max_displacement) displacement = max_displacement;
+            else if (displacement < -max_displacement) displacement = -max_displacement;
+
 
             //Compute the new reference frame
             tf::Transform t_mov;
@@ -154,9 +169,7 @@ namespace rwsua2017 {
             tf::Transform t = getPose() * t_mov;
             //Send the new transform to ROS
             br.sendTransform(tf::StampedTransform(t, ros::Time::now(), "/map", name));
-
         }
-
 
         vector<string> teammates;
     };

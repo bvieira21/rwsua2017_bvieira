@@ -346,9 +346,9 @@ namespace rwsua2017 {
             v.push_back(hunter_name);
 
             if (behaviour == "run")
-                dists[1] = dists[1]*0.8;
+                dists[1] = dists[1]*0.9;
             else
-                dists[0] = dists[0]*0.8;
+                dists[0] = dists[0]*0.9;
 
 
             if (dists[0] > dists[1]) {

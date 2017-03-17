@@ -150,7 +150,7 @@ namespace rwsua2017 {
 
             float displacement = msg->max_displacement;
 
-
+            ROS_INFO("I made a play!");
 
             //move my player
             move(displacement, turn_angle, msg->max_displacement, M_PI / 30);

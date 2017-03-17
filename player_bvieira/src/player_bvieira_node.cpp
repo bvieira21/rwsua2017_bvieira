@@ -105,6 +105,49 @@ namespace rwsua2017 {
 
             return atan2(y, x);
         }
+        
+        
+        
+        
+        
+        /**
+         * @brief  Calculates the angle to the input player 
+         * @param[in] player_name - player name
+         * @return Angle to point for selected player  
+         * @author B.Vieira
+         */
+        float getMapDist(void) {
+
+
+            tf::StampedTransform trans;
+            ros::Time now = ros::Time(0); //gets the latest transform received
+            try {
+                listener.waitForTransform(name, "map", now, ros::Duration(time_to_wait));
+                listener.lookupTransform(name, "map", now, trans);
+            } catch (tf::TransformException ex) {
+                ROS_ERROR("%s", ex.what());
+                ros::Duration(1.0).sleep();
+            }
+
+            float x = trans.getOrigin().x();
+            float y = trans.getOrigin().y();
+
+            //out << "x=" << x << " y= " << y << endl;
+
+
+
+            return sqrt(x*x+y*y);
+        }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
 
         /**
          * @brief  Gets my player position form referee
@@ -146,9 +189,19 @@ namespace rwsua2017 {
                 turn_angle = getAngleTo(enemies[1]) + 5 * M_PI / 6;
             else
                 turn_angle = getAngleTo(enemies[0]);
+            
+            ROS_WARN_STREAM("map dist->"<<getMapDist());
 
-
+            if(getMapDist()>5)
+            {
+                 ROS_WARN_STREAM("ESTOU A VOLTAR");
+                turn_angle=getAngleTo("map");
+                
+            }
+            
             float displacement = msg->max_displacement;
+            
+            
 
             ROS_INFO("I made a play!");
 
@@ -297,8 +350,10 @@ namespace rwsua2017 {
             }
 
             std::vector<std::string> v;
+            
             v.push_back(prey_name);
             v.push_back(hunter_name);
+            
 
             if (dists[0] > dists[1])
                 v.push_back("run");

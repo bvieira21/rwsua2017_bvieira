@@ -13,7 +13,7 @@
  *
  * =====================================================================================
  */
- #
+#
 
 
 
@@ -31,7 +31,6 @@ using namespace std;
 
 namespace rwsua2017 {
 
-    
     class MyPlayer : public Player //inherits the class Player
     {
     public:
@@ -41,22 +40,20 @@ namespace rwsua2017 {
         tf::TransformListener listener;
 
         tf::TransformBroadcaster br;
-        tf::Transform t1;
 
-		 /**
-		 * @brief  Class constructor, initializes the player 
-		 * @param[in] argin_name - player name
-		 * @param[in] argin_team_name - player team name (red, green or blue)
-		 * @return  
-	     * @author B.Vieira
-		 */
+        /**
+         * @brief  Class constructor, initializes the player 
+         * @param[in] argin_name - player name
+         * @param[in] argin_team_name - player team name (red, green or blue)
+         * @return  
+         * @author B.Vieira
+         */
         MyPlayer(string argin_name, string argin_team_name) : Player(argin_name, argin_team_name) {
-          
+
             sub = n.subscribe("/make_a_play/cat", 1000, &MyPlayer::makeAPlayCallback, this);
             cout << "Initialized MyPlayer" << endl;
 
-         
-
+            tf::Transform t1;
             t1.setOrigin(tf::Vector3(1, 1, 0));
             tf::Quaternion q;
             q.setRPY(0, 0, 0);
@@ -64,12 +61,12 @@ namespace rwsua2017 {
             br.sendTransform(tf::StampedTransform(t1, ros::Time::now(), "map", name));
 
         }
-        
-		 /**
-		 * @brief  Generation of a ramdom number
-		 * @return Random number generated  
-	     * @author B.Vieira
-		 */
+
+        /**
+         * @brief  Generation of a ramdom number
+         * @return Random number generated  
+         * @author B.Vieira
+         */
         double randNumber() {
             struct timeval t1;
             gettimeofday(&t1, NULL);
@@ -78,13 +75,13 @@ namespace rwsua2017 {
 
             return x;
         }
-		
-		/**
-		 * @brief  Calculates the angle to the input player 
-		 * @param[in] player_name - player name
-		 * @return Angle to point for selected player  
-	     * @author B.Vieira
-		 */
+
+        /**
+         * @brief  Calculates the angle to the input player 
+         * @param[in] player_name - player name
+         * @return Angle to point for selected player  
+         * @author B.Vieira
+         */
         float getAngleTo(string player_name) {
 
 
@@ -101,16 +98,35 @@ namespace rwsua2017 {
 
             cout << "x=" << x << " y= " << y << endl;
 
-            
+
 
             return atan2(y, x);
         }
 
-		 /**
-		 * @brief  Callback executed each time this event is triggered (by the referee, check!)
-		 * @param[in] 
-		 *  @author B.Vieira
-		 */
+        /**
+         * @brief  Gets my player position form referee
+         * @return My position  
+         * @author B.Vieira
+         */
+        tf::StampedTransform getPose(void) {
+
+            tf::StampedTransform trans;
+            
+            try {
+                listener.lookupTransform("map","bvieira", ros::Time(0), trans);
+            } catch (tf::TransformException ex) {
+                ROS_ERROR("%s", ex.what());
+                ros::Duration(1.0).sleep();
+            }
+
+            return trans;
+        }
+
+        /**
+         * @brief  Callback executed each time this event is triggered (by the referee, check!)
+         * @param[in] 
+         *  @author B.Vieira
+         */
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr & msg) {
 
             cout << "msg: max displacement -> " << msg->max_displacement << endl;
@@ -133,10 +149,10 @@ namespace rwsua2017 {
             t_mov.setRotation(q);
             t_mov.setOrigin(tf::Vector3(displacement, 0.0, 0.0));
 
-            tf::Transform t = t1 * t_mov;
+            tf::Transform t = getPose() * t_mov;
             //Send the new transform to ROS
             br.sendTransform(tf::StampedTransform(t, ros::Time::now(), "/map", name));
-            t1 = t;
+            
         }
 
 
@@ -144,15 +160,13 @@ namespace rwsua2017 {
     };
 }
 
-
-
 int main(int argc, char **argv) {
     //because we used <using namespace std>  we can replace the other line
     //std::cout << "Hello world" << std::endl;
     cout << "Hello world" << endl;
 
     ros::init(argc, argv, "player_bvieira");
-    
+
     //Creating an instance of class Player
     rwsua2017::MyPlayer myplayer("bvieira", "red");
 

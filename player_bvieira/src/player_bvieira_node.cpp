@@ -136,11 +136,13 @@ namespace rwsua2017 {
             //definição dos angulos de rotação e valores de translação
             //deveria ser calculado pela AI do sistema
 
-            float turn_angle = getAngleTo("jferreira");
-            //float turn_angle = M_PI/30;
-            float displacement = msg->max_displacement;
             
-            move(displacement, turn_angle, msg->max_displacement, M_PI/30);
+
+            float turn_angle = getAngleTo(getNearbyPrey());
+
+            float displacement = msg->max_displacement;
+
+            move(displacement, turn_angle, msg->max_displacement, M_PI / 30);
         }
 
         /**
@@ -169,6 +171,60 @@ namespace rwsua2017 {
             tf::Transform t = getPose() * t_mov;
             //Send the new transform to ROS
             br.sendTransform(tf::StampedTransform(t, ros::Time::now(), "/map", name));
+        }
+
+        string getNearbyPrey() {
+
+            tf::StampedTransform trans1, trans2, trans3;
+            ros::Time now = ros::Time(0); //gets the latest transform received
+            try {
+                listener.waitForTransform(name, "jferreira", now, ros::Duration(time_to_wait));
+                listener.lookupTransform(name, "jferreira", now, trans1);
+
+                listener.waitForTransform(name, "fsilva", now, ros::Duration(time_to_wait));
+                listener.lookupTransform(name, "fsilva", now, trans2);
+
+                listener.waitForTransform(name, "rmartins", now, ros::Duration(time_to_wait));
+                listener.lookupTransform(name, "rmartins", now, trans3);
+
+            } catch (tf::TransformException ex) {
+                ROS_ERROR("%s", ex.what());
+                ros::Duration(1.0).sleep();
+            }
+
+
+            float x1, x2, x3;
+            float y1, y2, y3;
+            float norm1,norm2,norm3;
+            string prey_name;
+            
+            x1 = trans1.getOrigin().x();
+            y1 = trans1.getOrigin().y();
+
+            x2 = trans2.getOrigin().x();
+            y2 = trans2.getOrigin().y();
+
+            x3 = trans3.getOrigin().x();
+            y3 = trans3.getOrigin().y();
+
+            
+            norm1=sqrt(x1*x1 + y1*y1); 
+            norm2=sqrt(x2*x2 + y2*y2); 
+            norm3=sqrt(x3*x3 + y3*y3); 
+            
+            if (norm1<norm2 && norm1<norm3)
+                prey_name="jferreira";
+            else if(norm2<norm1 && norm2<norm3)
+                prey_name="fsilva";
+            else 
+                prey_name="rmartins";
+                    
+            
+                    
+                    
+            return prey_name;
+
+
         }
 
         vector<string> teammates;

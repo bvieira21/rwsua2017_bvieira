@@ -99,7 +99,7 @@ namespace rwsua2017 {
             float x = trans.getOrigin().x();
             float y = trans.getOrigin().y();
 
-            cout << "x=" << x << " y= " << y << endl;
+            //out << "x=" << x << " y= " << y << endl;
 
 
 
@@ -133,7 +133,7 @@ namespace rwsua2017 {
          */
         void makeAPlayCallback(const rwsua2017_msgs::MakeAPlay::ConstPtr & msg) {
 
-            cout << "msg: max displacement -> " << msg->max_displacement << endl;
+            //cout << "msg: max displacement -> " << msg->max_displacement << endl;
 
             //definição dos angulos de rotação e valores de translação
             //deveria ser calculado pela AI do sistema
@@ -141,13 +141,13 @@ namespace rwsua2017 {
             //string neaby_players = getNearbyPlayers(); //in 1 is the prey, 2 the hunter
             std::vector<std::string> enemies = getNearbyPlayers();
             float turn_angle;
-            
-            if (enemies[2]=="run")
-                turn_angle=getAngleTo(enemies[1])+5*M_PI/6;
-            else
-                turn_angle=getAngleTo(enemies[0]);
 
-            
+            if (enemies[2] == "run")
+                turn_angle = getAngleTo(enemies[1]) + 5 * M_PI / 6;
+            else
+                turn_angle = getAngleTo(enemies[0]);
+
+
             float displacement = msg->max_displacement;
 
 
@@ -300,7 +300,7 @@ namespace rwsua2017 {
             v.push_back(prey_name);
             v.push_back(hunter_name);
 
-            if (dists[0]>dists[1])
+            if (dists[0] > dists[1])
                 v.push_back("run");
             else
                 v.push_back("hunt");
@@ -315,8 +315,9 @@ namespace rwsua2017 {
 int main(int argc, char **argv) {
     //because we used <using namespace std>  we can replace the other line
     //std::cout << "Hello world" << std::endl;
-    cout << "Hello world" << endl;
 
+    ROS_WARN("PLEASE RUN, THE HUNTMANS ARE COMMING!");
+    
     ros::init(argc, argv, "player_bvieira");
 
     //Creating an instance of class Player
@@ -325,8 +326,8 @@ int main(int argc, char **argv) {
 
 
     //cout << "Created an instance of class player with public name " << player.name << endl;
-    cout << "name = " << myplayer.name << endl;
-    cout << "team name = " << myplayer.get_team_name() << endl;
+    ROS_INFO_STREAM("name = " << myplayer.name);
+    ROS_INFO_STREAM("team name = " << myplayer.get_team_name());
 
     myplayer.teammates.push_back("rodolfo");
     myplayer.teammates.push_back("arnaldo");
